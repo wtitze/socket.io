@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Socket.IO chat</title>
+    <!-- definizione della grafica della pagina -->
+    <style> 
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 13px Helvetica, Arial; }
+      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages li { padding: 5px 10px; }
+      #messages li:nth-child(odd) { background: #eee; }
+    </style>
+  </head>
+  
+  <!-- import delle librerie necessarie: socket.io e jquery -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.dev.js"></script>
+  <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+  
+  <!-- codice che permette il collegamento al server della chat e l'invio/ricezione dei messaggi -->
+  <script>
+    $(document).ready(function () { // appena la pagina è stata completamente caricata
+      var socket = io(); // connessione al server
+      $('form').submit(function(e){ // quando l'utente clicca sul bottone presente nella form
+        e.preventDefault(); // prevents page reloading
+        socket.emit('chat message', $('#m').val()); // viene inviato a tutti (emit) il messaggio presente nella text (#m) 
+        $('#m').val(''); // pulizia della text
+        return false;
+      });
+      socket.on('chat message', function(msg){ // quando viene rilevato l'evento 'chat message'
+        $('#messages').append($('<li>').text(msg)); // il messaggio (msg) viene aggiunto alla lista dei messaggi
+      });
+    });
+  </script>
+
+  <!-- codice html della pagina -->
+  <body>
+    <ul id="messages"></ul>
+    <form action="">
+      <input id="m" autocomplete="off" /><button>Send</button>
+    </form>
+  </body>
+</html>
